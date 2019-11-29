@@ -13,7 +13,8 @@ class Game():
         print("{}S {}B {}O\n".format(self.strike, self.ball, self.outs))
     def throw(self):
         result_list = ['strike', 'ball', 'outs', 'hits']
-        self.result =result_list[math.floor(random.random()*len(result_list))]
+        #self.result =result_list[math.floor(random.random()*len(result_list))]
+        self.result = random.choice(result_list)
     def updateResult(self):
         if(self.result == 'strike'):
             self.strike += 1
