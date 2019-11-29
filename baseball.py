@@ -65,7 +65,7 @@ class Game:
             round.display()
     def updateScore(self,result,team):
         if result >= 4:
-            team.score += result-2
+            team.score += result-3
     def printResult(self):
         print("=======================================")
         print("경기 종료")
