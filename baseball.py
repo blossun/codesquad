@@ -1,8 +1,34 @@
 #-*- coding: utf-8 -*-
 import math
 import random
+import sys
 
-class Game():
+class Player: #타자 정보
+    def __init__(self,turn,name,ba):
+        self.turn = turn
+        self.name = name
+        self.ba = ba #Batting average
+
+class Team: #팀 정보
+    def __init__(self,team_name):
+        self.team_name = team_name
+        self.player_list = []
+
+    def inputInfo(self): #선수 데이터 입력
+        for i in range(9): 
+            print(str(i+1)+'번 타자 정보 입력> ')
+            name, ba = sys.stdin.readline().rstrip().split(' ')
+            self.player_list.append( Player(i,name,ba) );
+
+
+    def printInfo(self): #선수 데이터 출력
+        print("=====================")
+        print(self.team_name+' 팀 정보')
+        for i in self.player_list:
+            print(str(i.turn+1)+'번 '+i.name+', '+str(i.ba))
+        print()
+
+class Game:
     def __init__(self):
         self.strike = 0
         self.ball = 0
@@ -38,7 +64,50 @@ class Game():
 
 
 def main():
-    print("신나는 야구 게임!\n첫 번째 타자가 타석에 입장했습니다.\n")
+    while(True):
+        print("신나는 야구 시합\n1. 데이터 입력\n2. 데이터 출력\n0. 종료")
+        # print("메뉴선택 ( 1 - 2) ", end=' ')
+        sys.stdout.write("\n 메뉴 선택 (1 - 2) ")
+        choose = int(sys.stdin.readline().rstrip())
+
+        '''
+        #sample player data
+        team1 = Team("Team01")
+        team1.player_list.append( Player(0,"지성",0.123) )
+        team1.player_list.append( Player(1,"소지섭",0.323) )
+        team1.player_list.append( Player(2,"조승우",0.989) )
+        team2 = Team("Team02")
+        team2.player_list.append( Player(0,"공유",0.987) )
+        team2.player_list.append( Player(0,"박보검",0.1111) )
+        team2.player_list.append( Player(0,"노태규",0.922) )
+        '''
+        if choose == 1:
+            # print("1팀의 이름을 입력하세요> ")
+
+            sys.stdout.write("\n 1팀의 이름을 입력하세요 > ")
+            team_name = sys.stdin.readline().rstrip()
+            team1 = Team(team_name)
+            team1.inputInfo()
+            sys.stdout.write("\n 2팀의 이름을 입력하세요 > ")
+            team_name = sys.stdin.readline().rstrip()
+            team2 = Team(team_name)
+            team2.inputInfo()
+            print("팀 데이터 입력이 완료되었습니다.\n")
+        elif choose == 2:
+            #팀정보가 없을 경우 에러처리 구현
+            try:
+                team1.printInfo()
+                team2.printInfo()
+            except UnboundLocalError:
+                print("데이터가 없습니다.\n")
+                continue
+        elif choose == 0:
+            print('종료')
+            break
+        else:
+            print("잘못 입력하셨습니다. 0-2 중에서 입력해주세요.")
+
+'''
     round = Game()
     while(True):
         round.throw()
@@ -52,7 +121,7 @@ def main():
             round.strike = 0
             round.ball = 0
         round.display()
-
+'''
 
 
 if __name__ == "__main__":
