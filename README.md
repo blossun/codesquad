@@ -50,10 +50,12 @@ Game 클래스
    안타 및 아웃 시, team.setCurrentP() 호출하여 다음 타자로 선수 교체
    Attack.throw() 호출 시 현재 타자의 타율정보를 넘겨준다.
  - updateScore() : 공격이 끝난 후 팀의 성적 업데이트
- - printResult() : 경기 종료 후, 경기결과 화면에 표시
+ - printResult() : 경기 종료 후, 최종결과 화면에 표시
 
 Attack 클래스
  - throw() : 타자의 타율을 넘겨받아 타율에 따른 확률을 적용해 random으로 결과 추출
+ - display() 메소드 : 경기진행 상황 스트라이크(S), 볼(B), 아웃(O) 출력
+ - updateResult() 메소드 : throw()함수의 결과로 셋팅된 result 의 값에 따라 현재 진행 중인 게임의 결과를 update 한다.
 
 main()
  - 메뉴 추가 : 3.게임시작
