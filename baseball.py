@@ -2,6 +2,7 @@
 import math
 import random
 import sys
+import numpy as np
 
 class Player: #타자 정보
     def __init__(self,turn,name,ba):
@@ -118,9 +119,16 @@ class Attack: #Inning->attack ?
     def display(self):
         print("{}S {}B {}O\n".format(self.strike, self.ball, self.outs))
     def throw(self,ba): #타자의 타율을 넘겨받아서 random 으로 뽑기
-        print('ba : ', ba)
-        result_list = ['strike', 'ball', 'outs', 'hits']
-        self.result = random.choice(result_list)
+        #print('ba : ', ba)
+        result_list = ['hits','strike', 'ball', 'outs']
+        #타율별 확률 구하기
+        p_hits = ba
+        p_strike = (1-ba)/2 - 0.05
+        p_ball = (1-ba)/2 - 0.05
+        p_outs = 0.1
+        result_list_p = [p_hits,p_strike,p_ball,p_outs]
+        #print('result_list_p : ', result_list_p)
+        self.result = np.random.choice(result_list,1,p=result_list_p)
     def updateResult(self):
         if self.result == 'strike':
             self.strike += 1; print("스트라이크!")
@@ -150,28 +158,28 @@ def main():
             continue
 
         #sample player data
-        """
+
         team1 = Team("DOGS")
         team1.player_list.append( Player(0,"지성",0.123) )
-        team1.player_list.append( Player(1,"소지섭",0.323) )
-        team1.player_list.append( Player(2,"조승우",0.989) )
-        team1.player_list.append( Player(3,"박서준",0.123) )
-        team1.player_list.append( Player(4,"현빈",0.323) )
-        team1.player_list.append( Player(5,"원빈",0.989) )
-        team1.player_list.append( Player(6,"김태리",0.123) )
-        team1.player_list.append( Player(7,"송혜교",0.323) )
-        team1.player_list.append( Player(8,"공효진",0.989) )
+        team1.player_list.append( Player(1,"소지섭",0.223) )
+        team1.player_list.append( Player(2,"조승우",0.339) )
+        team1.player_list.append( Player(3,"박서준",0.443) )
+        team1.player_list.append( Player(4,"현빈",0.499) )
+        team1.player_list.append( Player(5,"원빈",0.499) )
+        team1.player_list.append( Player(6,"김태리",0.101) )
+        team1.player_list.append( Player(7,"송혜교",0.222) )
+        team1.player_list.append( Player(8,"공효진",0.333) )
         team2 = Team("CATS")
-        team2.player_list.append( Player(0,"공유",0.987) )
-        team2.player_list.append( Player(1,"박보검",0.1111) )
-        team2.player_list.append( Player(2,"노태규",0.922) )
-        team2.player_list.append( Player(3,"강동원",0.987) )
-        team2.player_list.append( Player(4,"조인성",0.1111) )
-        team2.player_list.append( Player(5,"장나라",0.922) )
-        team2.player_list.append( Player(6,"아이유",0.987) )
-        team2.player_list.append( Player(7,"수지",0.1111) )
-        team2.player_list.append( Player(8,"윤아",0.922) )
-        """
+        team2.player_list.append( Player(0,"공유",0.387) )
+        team2.player_list.append( Player(1,"박보검",0.111) )
+        team2.player_list.append( Player(2,"노태규",0.322) )
+        team2.player_list.append( Player(3,"강동원",0.487) )
+        team2.player_list.append( Player(4,"조인성",0.111) )
+        team2.player_list.append( Player(5,"장나라",0.222) )
+        team2.player_list.append( Player(6,"아이유",0.487) )
+        team2.player_list.append( Player(7,"수지",0.111) )
+        team2.player_list.append( Player(8,"윤아",0.122) )
+
         if choose == 1:
             team_name = input("1팀의 이름을 입력하세요 >").rstrip()
             team1 = Team(team_name)

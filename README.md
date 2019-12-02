@@ -53,7 +53,7 @@ Game 클래스
  - printResult() : 경기 종료 후, 경기결과 화면에 표시
 
 Attack 클래스
- - throw() : 타자의 타율을 넘겨받아 random으로 결과 추출
+ - throw() : 타자의 타율을 넘겨받아 타율에 따른 확률을 적용해 random으로 결과 추출
 
 main()
  - 메뉴 추가 : 3.게임시작
