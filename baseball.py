@@ -17,10 +17,23 @@ class Team: #팀 정보
         self.current_player = 0 #현재 타자
 
     def inputInfo(self): #선수 데이터 입력
-        for i in range(9):
-            print(str(i+1)+'번 타자 정보 입력> ')
-            name, ba = sys.stdin.readline().rstrip().split(' ')
-            self.player_list.append( Player(i,name,ba) );
+        i=0
+        while i<9:
+            try:
+                name, ba = input(str(i+1)+'번 타자 정보 입력> ').split(' ')
+            #error : space 1개 이상입력될 경우
+            # ValueError: too many values to unpack (expected 2)
+
+                if float(ba)>0.1 and float(ba)<0.5:
+                    self.player_list.append( Player(i,name,format(float(ba),".3f")) )
+                    i += 1
+                else:
+                    print("타율은 0.1 < h < 0.5 범위로 입력하셔야합니다.")
+                    continue
+            except ValueError:
+                print("잘못된 입력입니다.")
+                continue
+
 
     def printInfo(self): #선수 데이터 출력
         print("=====================")
@@ -60,9 +73,7 @@ class Game:
         self.printResult()
 
     def inning(self,team):
-        # team : 공격 순서인 팀
         round = Attack() #공격결과 hits count만 가져와서 득점 추가?
-        # next_player = 1
         while(True):
             """
             if next_player == 1 : #아웃 안타로 다음 선수 입장 여부 확인
@@ -71,7 +82,8 @@ class Game:
                 next_player = 0
             """
             team.printCurrentP()
-            round.throw()
+            #현재팀 타자의 타율(ba)넘겨 주기
+            round.throw(team.player_list[team.current_player].ba)
             round.updateResult()
             if(round.outs == 3): #3아웃이면 전체 안타수 출력 후 경기 종료
                 round.display()
@@ -80,7 +92,6 @@ class Game:
                 # break;
             if(round.result == 'hits' or round.result == 'outs'):
                 print('다음 타자가 타석에 입장했습니다.')
-                # next_player = 1
                 team.setCurrentP()
                 round.strike = 0
                 round.ball = 0
@@ -106,37 +117,30 @@ class Attack: #Inning->attack ?
         self.result = ''
     def display(self):
         print("{}S {}B {}O\n".format(self.strike, self.ball, self.outs))
-    def throw(self):
+    def throw(self,ba): #타자의 타율을 넘겨받아서 random 으로 뽑기
+        print('ba : ', ba)
         result_list = ['strike', 'ball', 'outs', 'hits']
-        #self.result =result_list[math.floor(random.random()*len(result_list))]
         self.result = random.choice(result_list)
     def updateResult(self):
         if self.result == 'strike':
-            self.strike += 1
-            print("스트라이크!")
+            self.strike += 1; print("스트라이크!")
             if self.strike == 3: # 3 strike => 1 outs
-                # print("3 스트라이크~", end=' ')
                 self.result = 'outs'
                 self.strike = 0
         if self.result == 'ball':
-            self.ball += 1
-            print("볼!")
+            self.ball += 1; print("볼!")
             if self.ball == 4: #4 ball => 1 hits
-                # print("4볼~", end=' ')
                 self.result = 'hits'
                 self.ball = 0
         if self.result == 'outs':
-            self.outs += 1
-            print("아웃!", end=' ')
+            self.outs += 1; print("아웃!", end=' ')
         if self.result == 'hits':
-            self.hits += 1
-            print("안타!", end=' ')
+            self.hits += 1; print("안타!", end=' ')
 
 
 def main():
     while(True):
         print("신나는 야구 시합\n1. 데이터 입력\n2. 데이터 출력\n3. 시합 시작\n0. 종료")
-        # print("메뉴선택 ( 1 - 2) ", end=' ')
         sys.stdout.write("\n 메뉴 선택 (1 - 3) ")
 
         try:
@@ -169,14 +173,10 @@ def main():
         team2.player_list.append( Player(8,"윤아",0.922) )
         """
         if choose == 1:
-            # print("1팀의 이름을 입력하세요> ")
-
-            sys.stdout.write("\n 1팀의 이름을 입력하세요 > ")
-            team_name = sys.stdin.readline().rstrip()
+            team_name = input("1팀의 이름을 입력하세요 >").rstrip()
             team1 = Team(team_name)
             team1.inputInfo()
-            sys.stdout.write("\n 2팀의 이름을 입력하세요 > ")
-            team_name = sys.stdin.readline().rstrip()
+            team_name = input("2팀의 이름을 입력하세요 >").rstrip()
             team2 = Team(team_name)
             team2.inputInfo()
             print("팀 데이터 입력이 완료되었습니다.\n")
