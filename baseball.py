@@ -61,7 +61,6 @@ class Board:
         print('\n+--------------------------------+')
         self.printTeamScore()
         print('|{:32}|'.format(' '))
-        # print('|{:16s}{:16s}|'.format(self.team1.team_name.center(16),self.team2.team_name.center(16)))
         print('|{:12}{:8}{:12}|'.format(self.team1.team_name.center(12),' ',self.team2.team_name.center(12)))
         self.printPlayer()
         print('|{:32}|'.format(' '))
@@ -103,10 +102,13 @@ class Game:
     def __init__(self,team1, team2):
         self.top = team1 #회초 공격 팀
         self.bottom = team2 #회말 공격 팀
+        self.skip = 0 #0이면 no skip, skip값 회말 후 투구보기
 
     def startGame(self):
         print(self.top.team_name +' VS ' + self.bottom.team_name +'의 시합을 시작합니다.')
         for i in range(6):
+            # print('#####{}회######'.format(i+1))
+            if self.skip == i: self.skip=0 #skip 회차가 되면 skip값을 0으로 초기화
             #회초
             AttackTeam = self.top
             result = self.inning(self.top,self.bottom,1)
@@ -130,8 +132,10 @@ class Game:
 
             # AttackTeam.printCurrentP()
             round.updateResult()
-            displayRound.display(result)
-            next = input('다음 투구 보기(enter) or 스킵하고 X회말 후 투구보기(숫자+enter) ?')
+            if self.skip == 0: #스킵안하면 쭉 보여줌
+                displayRound.display(result)
+                next = input('다음 투구 보기(enter) or 스킵하고 X회말 후 투구보기(숫자+enter) ?')
+                if next != '': self.skip = int(next) #skip 횟수 처리.......
             if(round.outs == 3): #3아웃이면 전체 안타수 출력 후 경기 종료
                 # round.display()
                 AttackTeam.setCurrentP()
@@ -214,7 +218,7 @@ def main():
             continue
 
         #sample player data
-        """
+
         team1 = Team("DOGS")
         team1.player_list.append( Player(0,"하지성",0.123) )
         team1.player_list.append( Player(1,"소지섭",0.223) )
@@ -235,10 +239,13 @@ def main():
         team2.player_list.append( Player(6,"아이유",0.487) )
         team2.player_list.append( Player(7,"김혜수",0.311) )
         team2.player_list.append( Player(8,"고아라",0.122) )
-        """
+
         if choose == 1:
-            team_name = input("1팀의 이름을 입력하세요 >").rstrip()
-            team1 = Team(team_name)
+            while True: #팀이름 미입력시 재입력문구 출력
+                team_name = input("1팀의 이름을 입력하세요 >").rstrip()
+                if team_name == '': continue
+                team1 = Team(team_name)
+                break
             team1.inputInfo()
             team_name = input("2팀의 이름을 입력하세요 >").rstrip()
             team2 = Team(team_name)
