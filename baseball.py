@@ -58,35 +58,44 @@ class Game:
     def startGame(self):
         print(self.top.team_name +' VS ' + self.bottom.team_name +'의 시합을 시작합니다.')
         for i in range(6):
+            AttackTeam = self.top
             print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
             print(str(i+1)+'회초 '+self.top.team_name+' 공격\n')
-            result = self.inning(self.top)
+            result = self.inning(self.top,self.bottom)
             print('최종 안타수: {}\n'.format(result))
             self.updateScore(result,self.top)
+            AttackTeam = self.bottom
             print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++")
             print(str(i+1)+'회말 '+self.bottom.team_name+' 공격\n')
-            result = self.inning(self.bottom)
+            #6회말 시작 시 팀2가 승리하고 있다면 곧바로 경기가 종료
+            if(i==5 and self.top.score < self.bottom.score):
+                 break
+            result = self.inning(self.bottom,self.top)
             print('최종 안타수: {}\n'.format(result))
             self.updateScore(result,self.bottom)
+            next = input('다음 투구 보기(enter) or 스킵하고 X회말 후 투구보기(숫자+enter) ?')
         self.printResult() #경기의 최종 결과를 화면에 표시
 
-    def inning(self,team): #각 회초/ 회말별 팀의 공격진행
+    def inning(self,AttackTeam,DefensiveTeam): #각 회초/ 회말별 팀의 공격진행
         round = Attack()
+        displayRound = Board(AttackTeam,DefensiveTeam,round)
         while(True):
-            team.printCurrentP()
+            AttackTeam.printCurrentP()
             #현재팀 타자의 타율(ba)넘겨 주기
-            round.throw(team.player_list[team.current_player].ba)
+            round.throw(AttackTeam.player_list[AttackTeam.current_player].ba)
             round.updateResult()
+            displayRound.display()
             if(round.outs == 3): #3아웃이면 전체 안타수 출력 후 경기 종료
-                round.display()
-                team.setCurrentP()
+                # round.display()
+                AttackTeam.setCurrentP()
                 return round.hits
             if(round.result == 'hits' or round.result == 'outs'):
                 print('다음 타자가 타석에 입장했습니다.')
-                team.setCurrentP()
+                AttackTeam.setCurrentP()
                 round.strike = 0
                 round.ball = 0
-            round.display()
+            #round.display() #전광판 표시 하는 함수에 team이랑 round 둘다 넘기면 될듯
+            # displayRound.display()
 
     def updateScore(self,result,team): #공격이 끝난 후 팀의 성적 업데이트
         if result >= 4:
@@ -108,11 +117,15 @@ class Attack:
         self.outs = 0
         self.hits = 0
         self.result = ''
+        self.ip = 0 #투구회수 - Innings Pitched
+        self.so = 0 #삼진아웃 - Strike Out
 
-    def display(self): #경기진행상황 화면에 표시
+    def display(self): #경기진행상황 화면에 표시 --> 전광판 표시 구현하는 걸로 수정
         print("{}S {}B {}O\n".format(self.strike, self.ball, self.outs))
+        print("투구 : {}\n삼진 : {}\n안타 : {}\n".format(self.ip, self.so, self.hits))
 
     def throw(self,ba): #타자의 타율을 넘겨받아서 random 으로 뽑기
+        self.ip += 1
         result_list = ['hits','strike', 'ball', 'outs']
         #타율별 확률 구하기
         p_hits = ba
@@ -127,7 +140,7 @@ class Attack:
             self.strike += 1; print("스트라이크!")
             if self.strike == 3: # 3 strike => 1 outs
                 self.result = 'outs'
-                self.strike = 0
+                self.strike = 0; self.so += 1
         if self.result == 'ball':
             self.ball += 1; print("볼!")
             if self.ball == 4: #4 ball => 1 hits
@@ -138,6 +151,15 @@ class Attack:
         if self.result == 'hits':
             self.hits += 1; print("안타!", end=' ')
 
+class Board:
+    def __init__(self,AttackTeam,DefensiveTeam,round):
+        self.AttackTeam = AttackTeam
+        self.DefensiveTeam = DefensiveTeam
+        self.round = round
+    def display(self):
+        # print(str(self.AttackTeam.current_player+1)+'번 '+self.AttackTeam.player_list[self.AttackTeam.current_player].name)
+        print("{}S {}B {}O\n".format(self.round.strike, self.round.ball, self.round.outs))
+        print("투구 : {}\n삼진 : {}\n안타 : {}\n".format(self.round.ip, self.round.so, self.round.hits))
 
 def main():
     while(True):
