@@ -8,7 +8,7 @@ class Player: #타자 정보
     def __init__(self,turn,name,ba):
         self.turn = turn
         self.name = name
-        self.ba = ba #Batting average
+        self.ba = float(ba) #Batting average
 
 class Team: #팀 정보
     def __init__(self,team_name):
@@ -16,6 +16,7 @@ class Team: #팀 정보
         self.player_list = []
         self.score = 0 #득점
         self.current_player = 0 #현재 타자
+        self.inning_score = [0,0,0,0,0,0] #각 회 점수
 
     def inputInfo(self): #선수 데이터 입력
         i=0
@@ -58,6 +59,9 @@ class Board:
         self.round = round
     def display(self,result):
         print('\n+--------------------------------+')
+        self.printTeamScore()
+        print('|{:32}|'.format(' '))
+        # print('|{:16s}{:16s}|'.format(self.team1.team_name.center(16),self.team2.team_name.center(16)))
         print('|{:12}{:8}{:12}|'.format(self.team1.team_name.center(12),' ',self.team2.team_name.center(12)))
         self.printPlayer()
         print('|{:32}|'.format(' '))
@@ -65,6 +69,11 @@ class Board:
         print('+--------------------------------+')
         self.AttackTeam.printCurrentP()
         self.printResult(result)
+
+    def printTeamScore(self):
+        print('|         1 2 3 4 5 6 | TOT      |')
+        print('| {:7}{:2}{:2}{:2}{:2}{:2}{:2} | {:9}|'.format(self.team1.team_name,self.team1.inning_score[0],self.team1.inning_score[1],self.team1.inning_score[2],self.team1.inning_score[3],self.team1.inning_score[4],self.team1.inning_score[5],str(self.team1.score)))
+        print('| {:7}{:2}{:2}{:2}{:2}{:2}{:2} | {:9}|'.format(self.team2.team_name,self.team2.inning_score[0],self.team2.inning_score[1],self.team2.inning_score[2],self.team2.inning_score[3],self.team2.inning_score[4],self.team2.inning_score[5],str(self.team2.score)))
 
     def printPlayer(self):
         for i in range(9):
@@ -98,22 +107,16 @@ class Game:
     def startGame(self):
         print(self.top.team_name +' VS ' + self.bottom.team_name +'의 시합을 시작합니다.')
         for i in range(6):
+            #회초
             AttackTeam = self.top
-            print("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-            print(str(i+1)+'회초 '+self.top.team_name+' 공격\n')
             result = self.inning(self.top,self.bottom,1)
-            print('최종 안타수: {}\n'.format(result))
-            self.updateScore(result,self.top)
+            self.updateScore(i,result,self.top)
+            #회말
             AttackTeam = self.bottom
-            print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-            print(str(i+1)+'회말 '+self.bottom.team_name+' 공격\n')
             #6회말 시작 시 팀2가 승리하고 있다면 곧바로 경기가 종료
-            if(i==5 and self.top.score < self.bottom.score):
-                 break
+            if(i==5 and self.top.score < self.bottom.score): break
             result = self.inning(self.top,self.bottom,2)
-            print('최종 안타수: {}\n'.format(result))
-            self.updateScore(result,self.bottom)
-
+            self.updateScore(i,result,self.bottom)
         self.printResult() #경기의 최종 결과를 화면에 표시
 
     def inning(self,topTeam,bottomTeam,attackTeam): #각 회초/ 회말별 팀의 공격진행
@@ -134,16 +137,16 @@ class Game:
                 AttackTeam.setCurrentP()
                 return round.hits
             if(round.result == 'hits' or round.result == 'outs'):
-                print('다음 타자가 타석에 입장했습니다.')
                 AttackTeam.setCurrentP()
                 round.strike = 0
                 round.ball = 0
             #round.display() #전광판 표시 하는 함수에 team이랑 round 둘다 넘기면 될듯
             # displayRound.display()
 
-    def updateScore(self,result,team): #공격이 끝난 후 팀의 성적 업데이트
+    def updateScore(self,i,result,team): #공격이 끝난 후 팀의 성적 업데이트
         if result >= 4:
             team.score += result-3
+            team.inning_score.insert(i,result-3)
 
     def printResult(self):
         print("=======================================")
@@ -211,17 +214,17 @@ def main():
             continue
 
         #sample player data
-
+        """
         team1 = Team("DOGS")
         team1.player_list.append( Player(0,"하지성",0.123) )
         team1.player_list.append( Player(1,"소지섭",0.223) )
         team1.player_list.append( Player(2,"조승우",0.339) )
         team1.player_list.append( Player(3,"박서준",0.443) )
-        team1.player_list.append( Player(4,"박소담",0.499) )
-        team1.player_list.append( Player(5,"하연수",0.499) )
+        team1.player_list.append( Player(4,"박소담",0.399) )
+        team1.player_list.append( Player(5,"하연수",0.199) )
         team1.player_list.append( Player(6,"김태리",0.101) )
         team1.player_list.append( Player(7,"송혜교",0.222) )
-        team1.player_list.append( Player(8,"공효진",0.333) )
+        team1.player_list.append( Player(8,"공효진",0.433) )
         team2 = Team("CATS")
         team2.player_list.append( Player(0,"이효리",0.387) )
         team2.player_list.append( Player(1,"박보검",0.111) )
@@ -230,9 +233,9 @@ def main():
         team2.player_list.append( Player(4,"조인성",0.111) )
         team2.player_list.append( Player(5,"장나라",0.222) )
         team2.player_list.append( Player(6,"아이유",0.487) )
-        team2.player_list.append( Player(7,"김혜수",0.111) )
+        team2.player_list.append( Player(7,"김혜수",0.311) )
         team2.player_list.append( Player(8,"고아라",0.122) )
-
+        """
         if choose == 1:
             team_name = input("1팀의 이름을 입력하세요 >").rstrip()
             team1 = Team(team_name)

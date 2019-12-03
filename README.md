@@ -81,6 +81,10 @@ Board 클래스
  - printPlayer() : 각 팀의 선수 리스트 (번호,이름) 표시, 현재 타자 표시
  - printSBO() : 각 팀의 투구,삼진,안타 수, 현재 회초/말 타자의 SBO(스트라이크, 볼, 아웃) 카운트
  - printResult() : 타자의 타격 결과 표시
+ - printTeamScore() : 두 팀의 이름, 회초 점수, 전체 누적 점수 표시
+
+Team 클래스
+ - inning_score : 각 회차 별 스코어 저장
 
 Attack 클래스
  - so : 삼진아웃 카운트 (Strike Out)
@@ -88,3 +92,5 @@ Attack 클래스
 
 Game 클래스
  - 6회말 시작 시 팀2가 승리하고 있다면 곧바로 경기가 종료
+ - startGame() : 경기 최종 결과 표시 외 print 기능 삭제. updateScore에 현재 회차 정보를 넘김
+ - updateScore() : 종료된 회차 정보를 받아서 team.inning_score에 스코어 저장
