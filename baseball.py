@@ -56,22 +56,38 @@ class Board:
         self.team2 = team2
         self.AttackTeam = AttackTeam
         self.round = round
-    def display(self):
-        # print(str(self.AttackTeam.current_player+1)+'번 '+self.AttackTeam.player_list[self.AttackTeam.current_player].name)
+    def display(self,result):
         print('\n+--------------------------------+')
         print('|{:12}{:8}{:12}|'.format(self.team1.team_name.center(12),' ',self.team2.team_name.center(12)))
+        self.printPlayer()
+        print('|{:32}|'.format(' '))
+        self.printSBO()
+        print('+--------------------------------+')
+        self.AttackTeam.printCurrentP()
+        self.printResult(result)
+
+    def printPlayer(self):
         for i in range(9):
             p1 = str(self.team1.player_list[i].turn+1)+'. '+self.team1.player_list[i].name
             p2 = str(self.team2.player_list[i].turn+1)+'. '+self.team2.player_list[i].name
-            if self.AttackTeam.player_list[self.AttackTeam.current_player].name == self.team1.player_list[i].name : p1 += 'V'
-            if self.AttackTeam.player_list[self.AttackTeam.current_player].name == self.team2.player_list[i].name : p2 += 'V'
+            if self.AttackTeam.player_list[self.AttackTeam.current_player].name == self.team1.player_list[i].name : p1 += ' V'
+            if self.AttackTeam.player_list[self.AttackTeam.current_player].name == self.team2.player_list[i].name : p2 += ' V'
             # print(p1.ljust(10)+p2.ljust(10))
             print('| {:8}{:8}{:8} |'.format(p1,' ',p2))
 
-        print('|{:32}|'.format(' '))
-        print("| 투구 : {:24}|\n| 삼진 : {:24}|\n| 안타 : {:24}|".format(str(self.round.ip).ljust(18), str(self.round.so).ljust(18), str(self.round.hits).ljust(18)))
-        print('+--------------------------------+')
-        self.AttackTeam.printCurrentP()
+    def printSBO(self):
+        S = 'X '* self.round.strike
+        B = 'X '* self.round.ball
+        O = 'X '* self.round.outs
+        print("| 투구 : {:10}S {:12}|".format(str(self.round.ip),S))
+        print("| 삼진 : {:10}B {:12}|".format(str(self.round.so),B))
+        print("| 안타 : {:10}O {:12}|".format(str(self.round.hits),O))
+
+    def printResult(self,result):
+        if result == 'strike': print("스트라이크!")
+        if result == 'ball': print("볼!")
+        if result == 'outs': print("아웃!")
+        if result == 'hits': print("안타!")
         print("{}S {}B {}O\n".format(self.round.strike, self.round.ball, self.round.outs))
 
 class Game:
@@ -107,11 +123,11 @@ class Game:
         displayRound = Board(topTeam,bottomTeam,AttackTeam,round)
         while(True):
             #현재팀 타자의 타율(ba)넘겨 주기
-            round.throw(AttackTeam.player_list[AttackTeam.current_player].ba)
+            result = round.throw(AttackTeam.player_list[AttackTeam.current_player].ba)
 
             # AttackTeam.printCurrentP()
             round.updateResult()
-            displayRound.display()
+            displayRound.display(result)
             next = input('다음 투구 보기(enter) or 스킵하고 X회말 후 투구보기(숫자+enter) ?')
             if(round.outs == 3): #3아웃이면 전체 안타수 출력 후 경기 종료
                 # round.display()
@@ -162,22 +178,23 @@ class Attack:
         p_outs = 0.1
         result_list_p = [p_hits,p_strike,p_ball,p_outs]
         self.result = np.random.choice(result_list,1,p=result_list_p)
+        return self.result
 
     def updateResult(self):
         if self.result == 'strike':
-            self.strike += 1; print("스트라이크!")
-            if self.strike == 3: # 3 strike => 1 outs
+            self.strike += 1;
+            if self.strike == 3:
                 self.result = 'outs'
                 self.strike = 0; self.so += 1
         if self.result == 'ball':
-            self.ball += 1; print("볼!")
-            if self.ball == 4: #4 ball => 1 hits
+            self.ball += 1;
+            if self.ball == 4:
                 self.result = 'hits'
                 self.ball = 0
         if self.result == 'outs':
-            self.outs += 1; print("아웃!", end=' ')
+            self.outs += 1;
         if self.result == 'hits':
-            self.hits += 1; print("안타!", end=' ')
+            self.hits += 1;
 
 
 
