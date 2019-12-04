@@ -11,14 +11,18 @@ class Player: #타자 정보
         self.ba = float(ba) #Batting average
 
 class Team: #팀 정보
-    def __init__(self,team_name):
-        self.team_name = team_name
+    def __init__(self):
         self.player_list = []
         self.score = 0 #득점
         self.current_player = 0 #현재 타자
         self.inning_score = [0,0,0,0,0,0] #각 회 점수
+        self.team_name = ''
+
+    def setTeamName(self,team_name):
+        self.team_name = team_name
 
     def inputInfo(self): #선수 데이터 입력
+        del self.player_list[:] #기존 선수 데이터가 있으면 삭제
         i=0
         while i<9:
             try:
@@ -33,6 +37,13 @@ class Team: #팀 정보
                 print("잘못된 입력입니다.")
                 continue
 
+    def setTeamInfo(self,team,i):
+        while True: #팀이름 미입력시 재입력문구 출력
+            team_name = input(str(i)+"팀의 이름을 입력하세요 >").rstrip()
+            if team_name == '': continue
+            team.setTeamName(team_name)
+            break
+        team.inputInfo()
 
     def printInfo(self): #선수 데이터 출력
         print("=====================")
@@ -50,6 +61,11 @@ class Team: #팀 정보
 
     def printCurrentP(self): #현재 타자의 순번과 이름을 출력
         print(str(self.current_player+1)+'번 타자  '+self.player_list[self.current_player].name+'입니다.')
+
+    def resetScore(self):
+        self.score = 0 #득점
+        self.current_player = 0 #현재 타자
+        self.inning_score = [0,0,0,0,0,0] #각 회 점수
 
 class Board:
     def __init__(self,team1,team2,AttackTeam,round):
@@ -162,6 +178,8 @@ class Game:
         print(str(self.top.score)+' : '+str(self.bottom.score))
         print("Thank you")
         print("=======================================")
+        self.top.resetScore()
+        self.bottom.resetScore()
 
 
 class Attack:
@@ -209,6 +227,31 @@ class Attack:
 
 
 def main():
+    team1 = Team()
+    team2 = Team()
+    #sample player data
+
+    team1.setTeamName("DOGS")
+    team1.player_list.append( Player(0,"하지성",0.123) )
+    team1.player_list.append( Player(1,"소지섭",0.223) )
+    team1.player_list.append( Player(2,"조승우",0.339) )
+    team1.player_list.append( Player(3,"박서준",0.443) )
+    team1.player_list.append( Player(4,"박소담",0.399) )
+    team1.player_list.append( Player(5,"하연수",0.199) )
+    team1.player_list.append( Player(6,"김태리",0.101) )
+    team1.player_list.append( Player(7,"송혜교",0.222) )
+    team1.player_list.append( Player(8,"공효진",0.433) )
+    team2.setTeamName("CATS")
+    team2.player_list.append( Player(0,"이효리",0.387) )
+    team2.player_list.append( Player(1,"박보검",0.111) )
+    team2.player_list.append( Player(2,"노태규",0.322) )
+    team2.player_list.append( Player(3,"강동원",0.487) )
+    team2.player_list.append( Player(4,"조인성",0.111) )
+    team2.player_list.append( Player(5,"장나라",0.222) )
+    team2.player_list.append( Player(6,"아이유",0.487) )
+    team2.player_list.append( Player(7,"김혜수",0.311) )
+    team2.player_list.append( Player(8,"고아라",0.122) )
+
     while(True):
         print("신나는 야구 시합\n1. 데이터 입력\n2. 데이터 출력\n3. 시합 시작\n0. 종료")
         sys.stdout.write("\n 메뉴 선택 (1 - 3) ")
@@ -220,39 +263,12 @@ def main():
             print("숫자를 입력해주세요.\n")
             continue
 
-        #sample player data
 
-        team1 = Team("DOGS")
-        team1.player_list.append( Player(0,"하지성",0.123) )
-        team1.player_list.append( Player(1,"소지섭",0.223) )
-        team1.player_list.append( Player(2,"조승우",0.339) )
-        team1.player_list.append( Player(3,"박서준",0.443) )
-        team1.player_list.append( Player(4,"박소담",0.399) )
-        team1.player_list.append( Player(5,"하연수",0.199) )
-        team1.player_list.append( Player(6,"김태리",0.101) )
-        team1.player_list.append( Player(7,"송혜교",0.222) )
-        team1.player_list.append( Player(8,"공효진",0.433) )
-        team2 = Team("CATS")
-        team2.player_list.append( Player(0,"이효리",0.387) )
-        team2.player_list.append( Player(1,"박보검",0.111) )
-        team2.player_list.append( Player(2,"노태규",0.322) )
-        team2.player_list.append( Player(3,"강동원",0.487) )
-        team2.player_list.append( Player(4,"조인성",0.111) )
-        team2.player_list.append( Player(5,"장나라",0.222) )
-        team2.player_list.append( Player(6,"아이유",0.487) )
-        team2.player_list.append( Player(7,"김혜수",0.311) )
-        team2.player_list.append( Player(8,"고아라",0.122) )
+
 
         if choose == 1:
-            while True: #팀이름 미입력시 재입력문구 출력
-                team_name = input("1팀의 이름을 입력하세요 >").rstrip()
-                if team_name == '': continue
-                team1 = Team(team_name)
-                break
-            team1.inputInfo()
-            team_name = input("2팀의 이름을 입력하세요 >").rstrip()
-            team2 = Team(team_name)
-            team2.inputInfo()
+            team1.setTeamInfo(team1,1)
+            team2.setTeamInfo(team2,2)
             print("팀 데이터 입력이 완료되었습니다.\n")
         elif choose == 2:
             #팀정보가 없을 경우 에러처리 구현
@@ -267,7 +283,7 @@ def main():
             try:
                 game = Game(team1, team2)
                 game.startGame()
-            except UnboundLocalError:
+            except IndexError:
                 print("데이터가 없습니다.\n")
                 continue
         elif choose == 0:

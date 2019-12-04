@@ -85,6 +85,11 @@ Board 클래스
 
 Team 클래스
  - inning_score : 각 회차 별 스코어 저장
+ - team_name : 설정할 팀 이름
+ - setTeamName() : 팀 이름을 설정
+ - setTeamInfo() : 팀 이름과 선수 정보를 입력받아 세팅
+ - inputInfo() : 기존 선수 데이터가 있으면 삭제하는 코드 추가
+ - resetScore() : 경기 종료 후, 획득한 점수 초기화
 
 Attack 클래스
  - so : 삼진아웃 카운트 (Strike Out)
@@ -101,6 +106,7 @@ Game 클래스
  - inning() : skip값이 0이면 스킵하지 않고 다음 투구보기
   skip 할 값을 입력받았다면 skip 에 값을 저장
   사용자가 값을 잘 못 입력할 시 에러처리 기능 추가
+ - printResult() : 경기 종료 후 최종 결과 화면에 표시하고 점수 초기화 
 
 main
  - 데이터 입력 중 팀이름을 입력하지않고 enter시 입력문구 재출력
