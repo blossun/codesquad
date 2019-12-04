@@ -135,7 +135,10 @@ class Game:
             if self.skip == 0: #스킵안하면 쭉 보여줌
                 displayRound.display(result)
                 next = input('다음 투구 보기(enter) or 스킵하고 X회말 후 투구보기(숫자+enter) ?')
-                if next != '': self.skip = int(next) #skip 횟수 처리.......
+                try:
+                    if next != '': self.skip = int(next) #skip 횟수 처리.......
+                except ValueError:
+                    print('잘못입력하셨습니다. 숫자를 입력해주세요')
             if(round.outs == 3): #3아웃이면 전체 안타수 출력 후 경기 종료
                 # round.display()
                 AttackTeam.setCurrentP()

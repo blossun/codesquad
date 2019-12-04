@@ -100,6 +100,7 @@ Game 클래스
  - skip : skip할 회차값 저장, default = 0(no skip)
  - inning() : skip값이 0이면 스킵하지 않고 다음 투구보기
   skip 할 값을 입력받았다면 skip 에 값을 저장
+  사용자가 값을 잘 못 입력할 시 에러처리 기능 추가
 
 main
  - 데이터 입력 중 팀이름을 입력하지않고 enter시 입력문구 재출력
