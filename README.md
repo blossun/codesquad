@@ -50,7 +50,7 @@ Game 클래스
    안타 및 아웃 시, team.setCurrentP() 호출하여 다음 타자로 선수 교체
    Attack.throw() 호출 시 현재 타자의 타율정보를 넘겨준다.
  - updateScore() : 공격이 끝난 후 팀의 성적 업데이트
- - printResult() : 경기 종료 후, 최종결과 화면에 표시
+ - printResult() : 경기 종료 후, 최종결과 화면에 표시하고 점수 초기화
 
 Attack 클래스
  - throw() : 타자의 타율을 넘겨받아 타율에 따른 확률을 적용해 random으로 결과 추출
@@ -67,3 +67,10 @@ Team 클래스
   마지막선수인 경우 다시 첫번 순서의 타자로 셋팅
  - printCurrentP() : 현재 타자의 순번과 이름을 출력
  - inputInfo() : 선수 데이터 입력 시 잘못된 입력값에 대한 에러처리 구현
+                기존 선수 데이터가 있으면 삭제하는 코드 추가
+ - team_name : 설정할 팀 이름
+ - setTeamName() : 팀 이름을 설정
+ - setTeamInfo() : 팀 이름과 선수 정보를 입력받아 세팅
+ - resetScore() : 경기 종료 후, 획득한 점수 초기화
+
+ setSample() : 팀의 player data 샘플 설정
