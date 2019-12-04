@@ -100,13 +100,15 @@ Attack 클래스
 Game 클래스
  - 6회말 시작 시 팀2가 승리하고 있다면 곧바로 경기가 종료
  - startGame() : 경기 최종 결과 표시 외 print 기능 삭제. updateScore에 현재 회차 정보를 넘김
-  skip 값과 현재 회차 값을 비교하여 같다면 skip 값을 0으로 초기화
+ - setSkip() : skip 값과 현재 회차 값을 비교하여 같다면 skip 값을 0으로 초기화
  - updateScore() : 종료된 회차 정보를 받아서 team.inning_score에 스코어 저장
  - skip : skip할 회차값 저장, default = 0(no skip)
  - inning() : skip값이 0이면 스킵하지 않고 다음 투구보기
   skip 할 값을 입력받았다면 skip 에 값을 저장
   사용자가 값을 잘 못 입력할 시 에러처리 기능 추가
- - printResult() : 경기 종료 후 최종 결과 화면에 표시하고 점수 초기화 
+ - printResult() : 경기 종료 후 최종 결과 화면에 표시하고 점수 초기화
 
 main
  - 데이터 입력 중 팀이름을 입력하지않고 enter시 입력문구 재출력
+
+setSample() : 팀의 player data 샘플 설정

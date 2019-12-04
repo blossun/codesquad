@@ -121,42 +121,33 @@ class Game:
         self.skip = 0 #0이면 no skip, skip값 회말 후 투구보기
 
     def startGame(self):
-        print(self.top.team_name +' VS ' + self.bottom.team_name +'의 시합을 시작합니다.')
+        if self.top.team_name == '': print("데이터가 없습니다.\n"); return #팀정보가 없을 경우 에러처리 구현
+        else: print(self.top.team_name +' VS ' + self.bottom.team_name +'의 시합을 시작합니다.')
         for i in range(6):
             # print('#####{}회######'.format(i+1))
             if self.skip == i: self.skip=0 #skip 회차가 되면 skip값을 0으로 초기화
             #회초
             AttackTeam = self.top
-            result = self.inning(self.top,self.bottom,1)
+            result = self.inning(self.top,self.bottom,self.top)
             self.updateScore(i,result,self.top)
             #회말
             AttackTeam = self.bottom
             #6회말 시작 시 팀2가 승리하고 있다면 곧바로 경기가 종료
             if(i==5 and self.top.score < self.bottom.score): break
-            result = self.inning(self.top,self.bottom,2)
+            result = self.inning(self.top,self.bottom,self.bottom)
             self.updateScore(i,result,self.bottom)
         self.printResult() #경기의 최종 결과를 화면에 표시
 
-    def inning(self,topTeam,bottomTeam,attackTeam): #각 회초/ 회말별 팀의 공격진행
+    def inning(self,topTeam,bottomTeam,AttackTeam): #각 회초/ 회말별 팀의 공격진행
         round = Attack()
-        if attackTeam ==1: AttackTeam = topTeam
-        else: AttackTeam = bottomTeam
         displayRound = Board(topTeam,bottomTeam,AttackTeam,round)
         while(True):
-            #현재팀 타자의 타율(ba)넘겨 주기
             result = round.throw(AttackTeam.player_list[AttackTeam.current_player].ba)
-
-            # AttackTeam.printCurrentP()
             round.updateResult()
             if self.skip == 0: #스킵안하면 쭉 보여줌
                 displayRound.display(result)
-                next = input('다음 투구 보기(enter) or 스킵하고 X회말 후 투구보기(숫자+enter) ?')
-                try:
-                    if next != '': self.skip = int(next) #skip 횟수 처리.......
-                except ValueError:
-                    print('잘못입력하셨습니다. 숫자를 입력해주세요')
+                self.setSkip() #스킵여부확인
             if(round.outs == 3): #3아웃이면 전체 안타수 출력 후 경기 종료
-                # round.display()
                 AttackTeam.setCurrentP()
                 return round.hits
             if(round.result == 'hits' or round.result == 'outs'):
@@ -165,6 +156,13 @@ class Game:
                 round.ball = 0
             #round.display() #전광판 표시 하는 함수에 team이랑 round 둘다 넘기면 될듯
             # displayRound.display()
+
+    def setSkip(self):
+        next = input('다음 투구 보기(enter) or 스킵하고 X회말 후 투구보기(숫자+enter) ?')
+        try:
+            if next != '': self.skip = int(next) #skip 횟수 처리.......
+        except ValueError:
+            print('잘못입력하셨습니다. 숫자를 입력해주세요')
 
     def updateScore(self,i,result,team): #공격이 끝난 후 팀의 성적 업데이트
         if result >= 4:
@@ -224,13 +222,7 @@ class Attack:
         if self.result == 'hits':
             self.hits += 1;
 
-
-
-def main():
-    team1 = Team()
-    team2 = Team()
-    #sample player data
-
+def setSample(team1,team2):
     team1.setTeamName("DOGS")
     team1.player_list.append( Player(0,"하지성",0.123) )
     team1.player_list.append( Player(1,"소지섭",0.223) )
@@ -252,6 +244,13 @@ def main():
     team2.player_list.append( Player(7,"김혜수",0.311) )
     team2.player_list.append( Player(8,"고아라",0.122) )
 
+def main():
+    team1 = Team()
+    team2 = Team()
+    #sample player data
+    setSample(team1,team2)
+
+
     while(True):
         print("신나는 야구 시합\n1. 데이터 입력\n2. 데이터 출력\n3. 시합 시작\n0. 종료")
         sys.stdout.write("\n 메뉴 선택 (1 - 3) ")
@@ -260,35 +259,19 @@ def main():
         try:
             choose = int(sys.stdin.readline().rstrip())
         except ValueError:
-            print("숫자를 입력해주세요.\n")
-            continue
-
-
-
+            print("숫자를 입력해주세요.\n"); continue
 
         if choose == 1:
             team1.setTeamInfo(team1,1)
             team2.setTeamInfo(team2,2)
-            print("팀 데이터 입력이 완료되었습니다.\n")
         elif choose == 2:
-            #팀정보가 없을 경우 에러처리 구현
-            try:
-                team1.printInfo()
-                team2.printInfo()
-            except UnboundLocalError:
-                print("데이터가 없습니다.\n")
-                continue
+            team1.printInfo()
+            team2.printInfo()
         elif choose == 3:
-            #팀정보가 없을 경우 에러처리 구현
-            try:
-                game = Game(team1, team2)
-                game.startGame()
-            except IndexError:
-                print("데이터가 없습니다.\n")
-                continue
+            game = Game(team1, team2)
+            game.startGame()
         elif choose == 0:
-            print('종료')
-            break
+            print('종료'); break
         else:
             print("잘못 입력하셨습니다. 0-3 중에서 입력해주세요.\n")
 
